@@ -14,17 +14,11 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <Target Name="SetDocumentsPath">
-    <Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted -File $(ProjectDir)GetDocumentsFolder.ps1" StdOutEncoding="utf-8">
-      <Output PropertyName="DocumentsFolder" TaskParameter="ConsoleOutput" />
-    </Exec>
-    <Message Text="Documents Folder Path: $(DocumentsFolder)" Importance="high" />
-  </Target>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(DocumentsFolder)\Documents\SimioUserExtensions\</OutputPath>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>$(DocumentsFolder)\Documents\SimioUserExtensions\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,7 +53,7 @@
       <HintPath>..\..\..\..\..\..\Program Files\Simio LLC\Simio\SimioAPI.Graphics.dll</HintPath>
     </Reference>
     <Reference Include="SimioDLL">
-      <HintPath>..\..\..\..\..\..\Program Files\Simio LLC\Simio API\SimioDLL.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Simio LLC\Simio\SimioDLL.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -153,9 +147,28 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
+	   -->
   <Target Name="BeforeBuild">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted -File $(ProjectDir)GetDocumentsFolder.ps1" StdOutEncoding="utf-8" />
+    <ReadLinesFromFile File="$(ProjectDir)DocumentsPath.txt">
+      <Output TaskParameter="Lines" PropertyName="DocumentsFolder" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <OutputPath>$(DocumentsFolder)\SimioUserExtensions\</OutputPath>
+    </PropertyGroup>
   </Target>
   <Target Name="AfterBuild">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted -File $(ProjectDir)GetDocumentsFolder.ps1" StdOutEncoding="utf-8" />
+    <ReadLinesFromFile File="$(ProjectDir)DocumentsPath.txt">
+      <Output TaskParameter="Lines" PropertyName="DocumentsFolder" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <OutputPath>$(DocumentsFolder)\SimioUserExtensions\</OutputPath>
+    </PropertyGroup>
   </Target>
+  <!--
+        <Message Text="Documents Folder Path: $(DocumentsFolder)" Importance="high" />
+      <Message Text="Output Path set to: $(OutputPath)" Importance="high" />
+
   -->
 </Project>
