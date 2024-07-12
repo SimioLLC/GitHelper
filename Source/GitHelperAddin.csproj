@@ -14,11 +14,19 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  
+  <Target Name="SetDocumentsPath">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted -File $(ProjectDir)GetDocumentsFolder.ps1" StdOutEncoding="utf-8">
+      <Output PropertyName="DocumentsFolder" TaskParameter="ConsoleOutput" />
+    </Exec>
+    <Message Text="Documents Folder Path: $(DocumentsFolder)" Importance="high"/>
+  </Target>
+  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Users\dan_h\Documents\SimioUserExtensions\</OutputPath>
+    <OutputPath>$(DocumentsFolder)\Documents\SimioUserExtensions\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
