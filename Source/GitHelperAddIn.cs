@@ -1,14 +1,10 @@
-﻿using System;
+﻿using SimioAPI;
+using SimioAPI.Extensions;
+using System;
 using System.Drawing;
-using System.Reflection;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Data;
-using SimioAPI;
-using SimioAPI.Extensions;
 
 namespace GitHelperAddIn
 {
