@@ -14,14 +14,12 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  
   <Target Name="SetDocumentsPath">
     <Exec Command="powershell -NoProfile -ExecutionPolicy Unrestricted -File $(ProjectDir)GetDocumentsFolder.ps1" StdOutEncoding="utf-8">
       <Output PropertyName="DocumentsFolder" TaskParameter="ConsoleOutput" />
     </Exec>
-    <Message Text="Documents Folder Path: $(DocumentsFolder)" Importance="high"/>
+    <Message Text="Documents Folder Path: $(DocumentsFolder)" Importance="high" />
   </Target>
-  
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -45,7 +43,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>GitHelperAddIn.ico</ApplicationIcon>
+    <ApplicationIcon>IconIco.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SimioAPI, Version=15.249.30265.0, Culture=neutral, processorArchitecture=MSIL">
@@ -112,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GitHelperAddIn.ico" />
+    <Content Include="IconIco.ico" />
     <Content Include="Resources\IconIco.ico" />
     <Content Include="Resources\IconPng.png" />
     <None Include="Resources\WindowsPng.png" />
