@@ -14,7 +14,11 @@ namespace GitHelperAddIn
     using System.IO;
     using System.Reflection;
     using System.Runtime.Versioning;
+    using System.Security.Policy;
 
+    /// <summary>
+    /// A collection of helper methods for interacting with Git and Visual Studio Code.
+    /// </summary>
     public static class GitHelpers
     {
 
@@ -173,8 +177,12 @@ namespace GitHelperAddIn
             }
         }
 
-
-        static string ExecuteGitCommand(string gitCommand )
+        /// <summary>
+        /// Launch a git command
+        /// </summary>
+        /// <param name="gitCommand"></param>
+        /// <returns></returns>
+        public static string ExecuteGitCommand(string gitCommand )
         {
 
             ProcessStartInfo processInfo = new ProcessStartInfo
@@ -299,6 +307,154 @@ namespace GitHelperAddIn
             }
         }
 
+
+        /// <summary>
+        /// Get the last folder, which is the project folder.
+        /// Returns an empty string if the project folder is not found.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string GetLastFolderName(string path)
+        {
+            // Ensure the path is not null or empty
+            if (string.IsNullOrEmpty(path))
+            {
+                return string.Empty;
+            }
+
+            // Normalize the path to avoid issues with different directory separators
+            string normalizedPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Get the name of the last directory
+            string lastFolderName = new DirectoryInfo(normalizedPath).Name;
+
+            return lastFolderName;
+        }
+
+        /// <summary>
+        /// Get the second to last folder, which is the project parent folder.
+        /// Returns an empty string if the parent folder is not found.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string GetSecondToLastFolderName(string path)
+        {
+            // Ensure the path is not null or empty
+            if (string.IsNullOrEmpty(path))
+                return string.Empty;
+
+            // Normalize the path to avoid issues with different directory separators
+            string normalizedPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Get the directory information
+            DirectoryInfo directoryInfo = new DirectoryInfo(normalizedPath);
+
+            // If the path points to a file, get the parent directory
+            if (File.Exists(normalizedPath))
+            {
+                directoryInfo = directoryInfo.Parent;
+            }
+
+            // Get the parent directory (second-to-last folder)
+            DirectoryInfo parentDirectory = directoryInfo?.Parent;
+
+            // If there is no parent directory, return null or handle the situation as needed
+            if (parentDirectory == null)
+            {
+                return string.Empty; // "The path does not have a second-to-last folder.");
+            }
+
+            return parentDirectory.Name;
+        }
+        /// <summary>
+        /// Get the parent folder, which is the path holding the project folder.
+        /// The fullProjectPath could be a file or a folder.
+        /// Examples: c:\a\b\c\
+        /// Returns an empty string if the parent folder is not found.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public static string GetProjectFolderParentPath(string fullProjectPath)
+        {
+            // Ensure the path is not null or empty
+            if (string.IsNullOrEmpty(fullProjectPath))
+                return string.Empty;
+
+            // Normalize the path to avoid issues with different directory separators
+            string normalizedPath = Path.GetFullPath(fullProjectPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Get the directory information
+            DirectoryInfo directoryInfo = new DirectoryInfo(normalizedPath);
+
+            // If the path points to a file, get the parent directory
+            if (File.Exists(normalizedPath))
+            {
+                directoryInfo = directoryInfo.Parent;
+            }
+
+            // Get the parent directory (second-to-last folder)
+            DirectoryInfo parentDirectory = directoryInfo?.Parent;
+
+            // If there is no parent directory, return null or handle the situation as needed
+            if (parentDirectory == null)
+            {
+                return string.Empty; // "The path does not have a second-to-last folder.");
+            }
+
+            return parentDirectory.Name;
+        }
+
+        /// <summary>
+        /// Returns the full path to the parent of the project path, which might be a folder or a file. 
+        /// E.g. c:\x\y\parent\foo\foo.simproj or c:\x\y\parent\foo should both return c:\x\y\parent
+        /// </summary>
+        /// <param name="projectPath"></param>
+        /// <returns></returns>
+        public static string GetParentFolderFullPath(string projectPath)
+        {
+            // Ensure the path is not null or empty
+            if (string.IsNullOrEmpty(projectPath))
+            {
+                return string.Empty; // "Path cannot be null or empty", nameof(projectPath));
+            }
+
+            // Normalize the path to avoid issues with different directory separators
+            string normalizedPath = Path.GetFullPath(projectPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Get the directory information
+            DirectoryInfo directoryInfo;
+
+            if (Directory.Exists(normalizedPath))
+            {
+                // If the path is a directory
+                directoryInfo = new DirectoryInfo(normalizedPath);
+            }
+            else if (File.Exists(normalizedPath))
+            {
+                // If the path is a file, get the parent directory
+                directoryInfo = new FileInfo(normalizedPath).Directory;
+            }
+            else
+            {
+                return string.Empty; // "The specified path does not exist.");
+            }
+
+            // Get the parent directory
+            DirectoryInfo parentDirectory = directoryInfo?.Parent;
+
+            // If there is no parent directory, return null or handle the situation as needed
+            if (parentDirectory == null)
+            {
+                return string.Empty; // "The path does not have a parent directory.");
+            }
+
+            return parentDirectory.FullName;
+        }
+
+        /// <summary>
+        /// Locate where the executable for VS Code resides.
+        /// </summary>
+        /// <returns></returns>
         public static string FindVSCodeExecutable()
         {
             // Define common possible VSCode installation paths
@@ -342,8 +498,9 @@ namespace GitHelperAddIn
 
 
         /// <summary>
-        /// Use reflection to get a string value.
+        /// Use reflection to get a string value for a property named "propertyName".
         /// The name must be an exact match, and known to be string.
+        /// If not found, a blank string is returned.
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="propertyName"></param>

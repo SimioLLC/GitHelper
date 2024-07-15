@@ -13,10 +13,6 @@ namespace GitHelperAddIn
         private ISimioProject _currentProject;
         private IDesignContext _context;
 
-        private string ProjectPath { get; set; } = String.Empty;
-        private string ProjectFolder { get; set; } = String.Empty;
-        private string ProjectName { get; set; } = String.Empty;
-
         internal IDesignContext SimioContext
         {
             get
@@ -34,15 +30,22 @@ namespace GitHelperAddIn
                     return;
                 }
 
-                ProjectPath = GitHelpers.GetStringProperty(_currentProject, "FileName");
-                ProjectFolder = Path.GetDirectoryName(ProjectPath);
-                ProjectName = Path.GetFileNameWithoutExtension(ProjectPath);
-                
             }
         }
 
-        internal Logger MyLogger { get; set; }
+        internal GitHelperContext GitHelperContext { get; set; }
 
+
+        /// <summary>
+        /// The path to the project folder
+        /// </summary>
+        private string ProjectFolderPath { get { return GitHelperContext.ProjectFolderPath; } }
+
+        private string ProjectNameWithoutExtension { get { return GitHelperContext.SimioProjectName; } }
+
+
+
+        internal Logger MyLogger { get; set; }
 
         public string ApplicationName { get; set; }
 
@@ -69,10 +72,10 @@ namespace GitHelperAddIn
 
                 comboGitCommands.Items.Clear();
                 comboGitCommands.Items.Add("Status");
-                comboGitCommands.Items.Add("Version");
-                comboGitCommands.Items.Add("Commit");
+                ////comboGitCommands.Items.Add("Version");
+                ////comboGitCommands.Items.Add("Commit");
 
-                Logit($"Loaded Git Helper for {ApplicationName}. ProjectFolder={this.ProjectFolder}");
+                Logit($"Loaded Git Helper for {ApplicationName}. ProjectFolder={this.ProjectFolderPath}");
 
             }
             catch (Exception ex)
@@ -116,7 +119,7 @@ namespace GitHelperAddIn
                     return;
                 }   
 
-                Logit($"Current Project={currentProject.Name}");
+                Logit($"Current Project={GitHelperContext.SimioProjectName}. FullPath={GitHelperContext.ProjectFolderPath}");
 
             }
             catch (Exception ex)
@@ -127,7 +130,7 @@ namespace GitHelperAddIn
 
         private void buttonLaunchVSCode_Click(object sender, EventArgs e)
         {
-            string simioProjectFolder = ProjectFolder;
+            string simioProjectFolder = ProjectFolderPath;
             string vsCodePath = GitHelpers.FindVSCodeExecutable();
             Logit($"Launching VSCode. Path to VSCode={vsCodePath}. ProjectFolder={simioProjectFolder}");
 
@@ -150,7 +153,7 @@ namespace GitHelperAddIn
             string repoName = textLocalRepoName.Text;
 
             string result = GitHelpers.CloneRepository(url, parentPath, repoName);
-
+            Logit($"Cloning operation complete. Result={result}");
         }
 
 
@@ -212,13 +215,29 @@ namespace GitHelperAddIn
         {
             try
             {
-                Logit($"Launching File Explorer with Folder={this.ProjectFolder}");
-                OpenFolder(this.ProjectFolder);
+                Logit($"Launching File Explorer with Folder={this.ProjectFolderPath}");
+                OpenFolder(this.ProjectFolderPath);
             }
             catch (Exception ex)
             {
-                AlertAndLog($"Cannot launch to Folder={this.ProjectFolder}. Err={ex.Message}");
+                AlertAndLog($"Cannot launch to Folder={this.ProjectFolderPath}. Err={ex.Message}");
             }
+        }
+
+        private void buttonGitStatus_Click(object sender, EventArgs e)
+        {
+            string result = GitHelpers.ExecuteGitCommand("status");
+            string[] lines = result.Split('\n');
+            int nn = 1;
+            foreach (string line in lines)
+            {
+                Logit($" {nn++}: {line}");
+            }
+        }
+
+        private void textLogging_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            textLogging.Clear();
         }
     }
 }

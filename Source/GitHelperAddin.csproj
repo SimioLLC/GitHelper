@@ -74,6 +74,7 @@
     <Compile Include="FormGitHelper.Designer.cs">
       <DependentUpon>FormGitHelper.cs</DependentUpon>
     </Compile>
+    <Compile Include="GitHelperContext.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GitHelperAddIn.cs" />

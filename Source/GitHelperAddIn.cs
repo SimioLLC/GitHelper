@@ -18,6 +18,8 @@ namespace GitHelperAddIn
 
         internal static ISimioProject CurrentProject { get; set; }
 
+        internal static GitHelperContext GitContext { get; set; } = new GitHelperContext();
+
         internal static Logger logger = new Logger();
 
         #region IDesignAddIn Members
@@ -57,67 +59,126 @@ namespace GitHelperAddIn
             try
             {
                 // Check to make sure a model has been opened in Simio
-                if (context.ActiveProject == null)
+                string projectFileName = GitHelpers.GetStringProperty(context.ActiveProject, "FileName");
+                if ( string.IsNullOrEmpty(projectFileName))
                 {
-                    AlertLog("You must have an active project to run this add-in.");
+                    string message = "There is no active project file. Enter the Parent folder under which the Simio Project folder will reside.";
+                    GitContext.ParentFolderPath = GetFolderPath(message);
+                    if ( !Directory.Exists(GitContext.ParentFolderPath))
+                    {
+                        AlertLog($"The folder {GitContext.ParentFolderPath} does not exist.  Please create it and try again.");
+                        return;
+                    }
+                    // See if it has children
+                    if (Directory.GetDirectories(GitContext.ParentFolderPath).Length == 1)
+                    {
+                        string childPath = Directory.GetDirectories(GitContext.ParentFolderPath)[0];
+                        GitContext.SimioProjectName = GitHelpers.GetLastFolderName(childPath);
+                        AlertLog($"The parent folder has one Child, which is assumed to be the Simio Project={GitContext.SimioProjectName}");
+                    }
+                    else
+                    {
+                        GitContext.SimioProjectName = string.Empty;
+                    }
                 }
-                if (context.ActiveModel == null)
+                else // We found the name in the file.
                 {
-                    AlertLog("You must have an active model to run this add-in.");
+                    string fullProjectFilePath = GitHelpers.GetStringProperty(context.ActiveProject, "FileName");
+                    string folderPath = Path.GetDirectoryName(fullProjectFilePath);
+                    GitContext.ParentFolderPath = GitHelpers.GetParentFolderFullPath(folderPath);
+                    GitContext.SimioProjectName = GitHelpers.GetLastFolderName(folderPath);
                 }
-
-                IModel am = context.ActiveModel;
 
                 StringBuilder sb = new StringBuilder();
 
-                // Get the full path to the project file
-
-                string filepath = GitHelpers.GetStringProperty(context.ActiveProject, "FileName");
-                if ( string.IsNullOrEmpty(filepath))
-                {
-                    AlertLog($"No filepath found for ActiveProject. Please provide a Simio project that has been saved to a file.");
-                }
-
-                // Find the folder that contains the project file
-                string filename = Path.GetFileName(filepath);
-
-
-                string extension = Path.GetExtension(filepath);
-                if ( extension.ToLower() != ".simproj")
-                {
-                    AlertLog($"The Simio project must be converted to a .simproj file.  Found {extension} instead.");
-                }
-
-
                 // Check for folder expectations
-                string folder = Path.GetDirectoryName(filepath);
 
-                string gitFolder = Path.Combine(folder, ".git");
-                if (!Directory.Exists(gitFolder))
+                if (Directory.Exists(GitContext.ProjectFolderPath))
                 {
-                    AlertLog($"No .git folder found in {folder}. Please set up Git on the Simio project folder.");
+                    string gitFolder = Path.Combine(GitContext.ProjectFolderPath, ".git");
+                    if (!Directory.Exists(gitFolder))
+                    {
+                        AlertLog($"No .git folder ({gitFolder}). Please set up Git on the Simio project folder.");
+                        goto ShowForm;
+                    }
                 }
-
-                // Launch the form and give it access to the Simio Design Context
-                FormGitHelper FormViewer = new FormGitHelper
-                {
-                    SimioContext = context,
-                    MyLogger = logger
-                };
-
-                FormViewer.Show();
 
             }
             catch (Exception ex)
             {
                 if (ex.Message != "Canceled")
                 {
-                    MessageBox.Show(ex.Message, "Error");
+                    MessageBox.Show(ex.Message, "Execute Error");
                 }
+            }
+
+        ShowForm:
+
+            // Launch the form and give it access to the Simio Design and Git Contexts
+            FormGitHelper FormViewer = new FormGitHelper
+            {
+                SimioContext = context,
+                GitHelperContext = GitContext,
+                MyLogger = logger
+            };
+
+            FormViewer.Show();
+        }
+
+        private string GetFolderPath(string message)
+        {
+            string selectedPath = string.Empty;
+
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = message;
+                folderBrowserDialog.ShowNewFolderButton = true;
+
+                // Show the dialog and get the result
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                // Check if the user selected a folder
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    selectedPath = folderBrowserDialog.SelectedPath;
+                    // Display the selected folder path
+                    Logit($"Selected folder: {selectedPath}");
+                }
+                else
+                {
+                    // Display a message if no folder was selected
+                    Logit("No folder selected.");
+                }
+                return selectedPath;
             }
         }
 
+        private string GetFilePath()
+        {
+            string selectedPath = string.Empty;
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Simproj files (*.simproj)|*.simproj";
+                openFileDialog.Title = "Select a .simproj file";
 
+                // Show the dialog and get the result
+                DialogResult result = openFileDialog.ShowDialog();
+
+                // Check if the user selected a file
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(openFileDialog.FileName))
+                {
+                    selectedPath = openFileDialog.FileName;
+                    // Display the selected file path
+                    Logit($"Selected file={selectedPath}");
+                }
+                else
+                {
+                    // Display a message if no file was selected
+                    Logit($"No file selected.");
+                }
+                return selectedPath;
+            }
+        }
 
         internal void Logit(string message)
         {
@@ -127,6 +188,7 @@ namespace GitHelperAddIn
 
         private void AlertLog(string message)
         {
+            MessageBox.Show(message, "Alert");
             logger.Add(message);
         }
     

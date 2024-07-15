@@ -52,9 +52,7 @@ namespace GitHelperAddIn
             this.buttonGetCurrentProjectionInfo = new System.Windows.Forms.Button();
             this.tabGitCommands = new System.Windows.Forms.TabPage();
             this.comboGitCommands = new System.Windows.Forms.ComboBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.textGitResults = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonExecuteGitCommand = new System.Windows.Forms.Button();
             this.labelGitInstructions = new System.Windows.Forms.Label();
             this.tabGitClone = new System.Windows.Forms.TabPage();
             this.textLocalRepoName = new System.Windows.Forms.TextBox();
@@ -71,9 +69,11 @@ namespace GitHelperAddIn
             this.labelInstructions = new System.Windows.Forms.Label();
             this.panelContent = new System.Windows.Forms.Panel();
             this.splitContainerTop = new System.Windows.Forms.SplitContainer();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.panelLogging = new System.Windows.Forms.Panel();
             this.textLogging = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.panelLogHeader = new System.Windows.Forms.Panel();
+            this.labelLogInstructions = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.tabPages.SuspendLayout();
@@ -91,7 +91,8 @@ namespace GitHelperAddIn
             this.splitContainerTop.Panel1.SuspendLayout();
             this.splitContainerTop.Panel2.SuspendLayout();
             this.splitContainerTop.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.panelLogging.SuspendLayout();
+            this.panelLogHeader.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -148,7 +149,7 @@ namespace GitHelperAddIn
             this.tabPages.Location = new System.Drawing.Point(0, 0);
             this.tabPages.Name = "tabPages";
             this.tabPages.SelectedIndex = 0;
-            this.tabPages.Size = new System.Drawing.Size(1141, 216);
+            this.tabPages.Size = new System.Drawing.Size(1141, 253);
             this.tabPages.TabIndex = 2;
             // 
             // tabCommands
@@ -156,7 +157,7 @@ namespace GitHelperAddIn
             this.tabCommands.Controls.Add(this.panelCommands);
             this.tabCommands.Location = new System.Drawing.Point(4, 26);
             this.tabCommands.Name = "tabCommands";
-            this.tabCommands.Size = new System.Drawing.Size(1133, 186);
+            this.tabCommands.Size = new System.Drawing.Size(1133, 223);
             this.tabCommands.TabIndex = 4;
             this.tabCommands.Text = "Commands";
             this.tabCommands.UseVisualStyleBackColor = true;
@@ -175,7 +176,7 @@ namespace GitHelperAddIn
             this.panelCommands.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelCommands.Location = new System.Drawing.Point(0, 0);
             this.panelCommands.Name = "panelCommands";
-            this.panelCommands.Size = new System.Drawing.Size(1133, 186);
+            this.panelCommands.Size = new System.Drawing.Size(1133, 223);
             this.panelCommands.TabIndex = 5;
             // 
             // buttonLaunchFileExplorer
@@ -208,6 +209,7 @@ namespace GitHelperAddIn
             this.buttonGitStatus.Text = "Get Git Status";
             this.toolTip1.SetToolTip(this.buttonGitStatus, "Show Status information in the log window below");
             this.buttonGitStatus.UseVisualStyleBackColor = true;
+            this.buttonGitStatus.Click += new System.EventHandler(this.buttonGitStatus_Click);
             // 
             // pictureBox2
             // 
@@ -267,13 +269,11 @@ namespace GitHelperAddIn
             // tabGitCommands
             // 
             this.tabGitCommands.Controls.Add(this.comboGitCommands);
-            this.tabGitCommands.Controls.Add(this.label16);
-            this.tabGitCommands.Controls.Add(this.textGitResults);
-            this.tabGitCommands.Controls.Add(this.button1);
+            this.tabGitCommands.Controls.Add(this.buttonExecuteGitCommand);
             this.tabGitCommands.Controls.Add(this.labelGitInstructions);
             this.tabGitCommands.Location = new System.Drawing.Point(4, 26);
             this.tabGitCommands.Name = "tabGitCommands";
-            this.tabGitCommands.Size = new System.Drawing.Size(1133, 186);
+            this.tabGitCommands.Size = new System.Drawing.Size(1133, 224);
             this.tabGitCommands.TabIndex = 6;
             this.tabGitCommands.Text = "Git Commands";
             this.tabGitCommands.UseVisualStyleBackColor = true;
@@ -283,41 +283,20 @@ namespace GitHelperAddIn
             this.comboGitCommands.FormattingEnabled = true;
             this.comboGitCommands.Location = new System.Drawing.Point(12, 44);
             this.comboGitCommands.Name = "comboGitCommands";
-            this.comboGitCommands.Size = new System.Drawing.Size(434, 25);
+            this.comboGitCommands.Size = new System.Drawing.Size(638, 25);
             this.comboGitCommands.TabIndex = 32;
             this.comboGitCommands.SelectedIndexChanged += new System.EventHandler(this.comboGitCommands_SelectedIndexChanged);
             // 
-            // label16
+            // buttonExecuteGitCommand
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(25, 104);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(77, 17);
-            this.label16.TabIndex = 26;
-            this.label16.Text = "Git Results";
-            // 
-            // textGitResults
-            // 
-            this.textGitResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textGitResults.Location = new System.Drawing.Point(12, 124);
-            this.textGitResults.Multiline = true;
-            this.textGitResults.Name = "textGitResults";
-            this.textGitResults.ReadOnly = true;
-            this.textGitResults.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textGitResults.Size = new System.Drawing.Size(1113, 46);
-            this.textGitResults.TabIndex = 30;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(917, 54);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(192, 48);
-            this.button1.TabIndex = 31;
-            this.button1.Text = "Execute Command";
-            this.toolTip1.SetToolTip(this.button1, "Compute the Lon,Lat to Simio Facility View  transfrom.");
-            this.button1.UseVisualStyleBackColor = true;
+            this.buttonExecuteGitCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonExecuteGitCommand.Location = new System.Drawing.Point(806, 31);
+            this.buttonExecuteGitCommand.Name = "buttonExecuteGitCommand";
+            this.buttonExecuteGitCommand.Size = new System.Drawing.Size(192, 48);
+            this.buttonExecuteGitCommand.TabIndex = 31;
+            this.buttonExecuteGitCommand.Text = "Execute Command";
+            this.toolTip1.SetToolTip(this.buttonExecuteGitCommand, "Compute the Lon,Lat to Simio Facility View  transfrom.");
+            this.buttonExecuteGitCommand.UseVisualStyleBackColor = true;
             // 
             // labelGitInstructions
             // 
@@ -343,7 +322,7 @@ namespace GitHelperAddIn
             this.tabGitClone.Controls.Add(this.buttonCloneSimioProject);
             this.tabGitClone.Location = new System.Drawing.Point(4, 26);
             this.tabGitClone.Name = "tabGitClone";
-            this.tabGitClone.Size = new System.Drawing.Size(1133, 186);
+            this.tabGitClone.Size = new System.Drawing.Size(1133, 224);
             this.tabGitClone.TabIndex = 7;
             this.tabGitClone.Text = "Clone Simio Project";
             this.tabGitClone.UseVisualStyleBackColor = true;
@@ -354,7 +333,7 @@ namespace GitHelperAddIn
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textLocalRepoName.Location = new System.Drawing.Point(202, 144);
             this.textLocalRepoName.Name = "textLocalRepoName";
-            this.textLocalRepoName.Size = new System.Drawing.Size(283, 23);
+            this.textLocalRepoName.Size = new System.Drawing.Size(327, 23);
             this.textLocalRepoName.TabIndex = 41;
             this.toolTip1.SetToolTip(this.textLocalRepoName, "Name for the local repository. Must be a legal folder name since it will reside u" +
         "nder the parent folder.");
@@ -365,10 +344,11 @@ namespace GitHelperAddIn
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(9, 146);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 18);
+            this.label2.Size = new System.Drawing.Size(166, 18);
             this.label2.TabIndex = 40;
-            this.label2.Text = "Local Repository";
-            this.toolTip1.SetToolTip(this.label2, "The name for the local repository, which will be a subdirectory under the Parent");
+            this.label2.Text = "Local Repository Folder";
+            this.toolTip1.SetToolTip(this.label2, "The name for the local repository project folder, which will be a folder under th" +
+        "e Parent");
             // 
             // buttonSearchCloneFolder
             // 
@@ -400,7 +380,7 @@ namespace GitHelperAddIn
             this.textLocalParentFolder.Name = "textLocalParentFolder";
             this.textLocalParentFolder.Size = new System.Drawing.Size(839, 23);
             this.textLocalParentFolder.TabIndex = 37;
-            this.toolTip1.SetToolTip(this.textLocalParentFolder, "The parent folder for you local repository");
+            this.toolTip1.SetToolTip(this.textLocalParentFolder, "The parent folder for you local repository. It must exist.");
             // 
             // label1
             // 
@@ -408,9 +388,9 @@ namespace GitHelperAddIn
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(9, 98);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 18);
+            this.label1.Size = new System.Drawing.Size(171, 18);
             this.label1.TabIndex = 36;
-            this.label1.Text = "Local Parent Folder";
+            this.label1.Text = "Local Parent Folder Path";
             this.toolTip1.SetToolTip(this.label1, "The folder under which the local repository will reside");
             // 
             // labelRemoteRepository
@@ -447,7 +427,8 @@ namespace GitHelperAddIn
             // 
             // buttonCloneSimioProject
             // 
-            this.buttonCloneSimioProject.Location = new System.Drawing.Point(8, 203);
+            this.buttonCloneSimioProject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCloneSimioProject.Location = new System.Drawing.Point(849, 131);
             this.buttonCloneSimioProject.Name = "buttonCloneSimioProject";
             this.buttonCloneSimioProject.Size = new System.Drawing.Size(192, 48);
             this.buttonCloneSimioProject.TabIndex = 32;
@@ -478,6 +459,7 @@ namespace GitHelperAddIn
             // 
             // panelContent
             // 
+            this.panelContent.BackColor = System.Drawing.SystemColors.Control;
             this.panelContent.Controls.Add(this.splitContainerTop);
             this.panelContent.Controls.Add(this.panelTop);
             this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -499,30 +481,53 @@ namespace GitHelperAddIn
             // 
             // splitContainerTop.Panel2
             // 
-            this.splitContainerTop.Panel2.Controls.Add(this.panel1);
+            this.splitContainerTop.Panel2.Controls.Add(this.panelLogging);
             this.splitContainerTop.Size = new System.Drawing.Size(1141, 551);
-            this.splitContainerTop.SplitterDistance = 216;
+            this.splitContainerTop.SplitterDistance = 253;
             this.splitContainerTop.TabIndex = 5;
             // 
-            // panel1
+            // panelLogging
             // 
-            this.panel1.Controls.Add(this.textLogging);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1141, 331);
-            this.panel1.TabIndex = 4;
+            this.panelLogging.BackColor = System.Drawing.SystemColors.Control;
+            this.panelLogging.Controls.Add(this.textLogging);
+            this.panelLogging.Controls.Add(this.panelLogHeader);
+            this.panelLogging.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelLogging.Location = new System.Drawing.Point(0, 0);
+            this.panelLogging.Name = "panelLogging";
+            this.panelLogging.Size = new System.Drawing.Size(1141, 294);
+            this.panelLogging.TabIndex = 4;
             // 
             // textLogging
             // 
             this.textLogging.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textLogging.Location = new System.Drawing.Point(0, 0);
+            this.textLogging.Location = new System.Drawing.Point(0, 41);
             this.textLogging.Multiline = true;
             this.textLogging.Name = "textLogging";
             this.textLogging.ReadOnly = true;
             this.textLogging.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textLogging.Size = new System.Drawing.Size(1141, 331);
+            this.textLogging.Size = new System.Drawing.Size(1141, 253);
             this.textLogging.TabIndex = 31;
+            this.textLogging.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textLogging_MouseDoubleClick);
+            // 
+            // panelLogHeader
+            // 
+            this.panelLogHeader.Controls.Add(this.labelLogInstructions);
+            this.panelLogHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelLogHeader.Location = new System.Drawing.Point(0, 0);
+            this.panelLogHeader.Name = "panelLogHeader";
+            this.panelLogHeader.Size = new System.Drawing.Size(1141, 41);
+            this.panelLogHeader.TabIndex = 32;
+            // 
+            // labelLogInstructions
+            // 
+            this.labelLogInstructions.AutoSize = true;
+            this.labelLogInstructions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLogInstructions.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.labelLogInstructions.Location = new System.Drawing.Point(12, 10);
+            this.labelLogInstructions.Name = "labelLogInstructions";
+            this.labelLogInstructions.Size = new System.Drawing.Size(261, 16);
+            this.labelLogInstructions.TabIndex = 10;
+            this.labelLogInstructions.Text = "Logging panel. Double-click panel to clear.";
             // 
             // FormGitHelper
             // 
@@ -556,8 +561,10 @@ namespace GitHelperAddIn
             this.splitContainerTop.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTop)).EndInit();
             this.splitContainerTop.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.panelLogging.ResumeLayout(false);
+            this.panelLogging.PerformLayout();
+            this.panelLogHeader.ResumeLayout(false);
+            this.panelLogHeader.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -575,14 +582,12 @@ namespace GitHelperAddIn
         //private IContainer components;
         private TabPage tabCommands;
         private TabPage tabGitCommands;
-        private TextBox textGitResults;
         private Label labelGitInstructions;
-        private Label label16;
         private Panel panelCommands;
         private Button buttonGetCurrentProjectionInfo;
         private ToolStripMenuItem aboutToolStripMenuItem;
-        private Button button1;
-        private Panel panel1;
+        private Button buttonExecuteGitCommand;
+        private Panel panelLogging;
         private SplitContainer splitContainerTop;
         private TextBox textLogging;
         private Button buttonLaunchVSCode;
@@ -604,6 +609,8 @@ namespace GitHelperAddIn
         private PictureBox picSimio1;
         private Button buttonLaunchFileExplorer;
         private PictureBox picWindowsLaunchFileExplorer;
+        private Panel panelLogHeader;
+        private Label labelLogInstructions;
     }
 
     #endregion
