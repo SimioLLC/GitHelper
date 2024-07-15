@@ -60,12 +60,10 @@ namespace GitHelperAddIn
                 if (context.ActiveProject == null)
                 {
                     AlertLog("You must have an active project to run this add-in.");
-                    return;
                 }
                 if (context.ActiveModel == null)
                 {
                     AlertLog("You must have an active model to run this add-in.");
-                    return;
                 }
 
                 IModel am = context.ActiveModel;
@@ -78,7 +76,6 @@ namespace GitHelperAddIn
                 if ( string.IsNullOrEmpty(filepath))
                 {
                     AlertLog($"No filepath found for ActiveProject. Please provide a Simio project that has been saved to a file.");
-                    return;
                 }
 
                 // Find the folder that contains the project file
@@ -89,7 +86,6 @@ namespace GitHelperAddIn
                 if ( extension.ToLower() != ".simproj")
                 {
                     AlertLog($"The Simio project must be converted to a .simproj file.  Found {extension} instead.");
-                    return;
                 }
 
 
@@ -100,7 +96,6 @@ namespace GitHelperAddIn
                 if (!Directory.Exists(gitFolder))
                 {
                     AlertLog($"No .git folder found in {folder}. Please set up Git on the Simio project folder.");
-                    return;
                 }
 
                 // Launch the form and give it access to the Simio Design Context
